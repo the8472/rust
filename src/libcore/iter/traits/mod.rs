@@ -13,3 +13,5 @@ pub use self::collect::{FromIterator, IntoIterator, Extend};
 pub use self::accum::{Sum, Product};
 #[stable(feature = "rust1", since = "1.0.0")]
 pub use self::marker::{FusedIterator, TrustedLen};
+#[unstable(issue = "0", feature = "inplace_iteration")]
+pub use self::marker::InPlaceIterable;

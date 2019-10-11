@@ -338,6 +338,9 @@ pub use self::traits::FusedIterator;
 #[unstable(feature = "trusted_len", issue = "37572")]
 pub use self::traits::TrustedLen;
 
+#[unstable(issue = "0", feature = "inplace_iteration")]
+pub use self::traits::InPlaceIterable;
+
 #[stable(feature = "rust1", since = "1.0.0")]
 pub use self::adapters::{Rev, Cycle, Chain, Zip, Map, Filter, FilterMap, Enumerate};
 #[stable(feature = "rust1", since = "1.0.0")]
@@ -352,6 +355,8 @@ pub use self::adapters::StepBy;
 pub use self::adapters::Flatten;
 #[stable(feature = "iter_copied", since = "1.36.0")]
 pub use self::adapters::Copied;
+#[unstable(issue = "0", feature = "inplace_iteration")]
+pub use self::adapters::SourceIter;
 
 pub(crate) use self::adapters::{TrustedRandomAccess, process_results};
 
