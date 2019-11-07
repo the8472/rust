@@ -2229,8 +2229,9 @@ fn specialize_one_pattern<'p, 'a: 'p, 'q: 'p, 'tcx>(
     ctor_wild_subpatterns: &[&'p Pat<'tcx>],
 ) -> Option<PatStack<'p, 'tcx>> {
     let result = match *pat.kind {
-        PatKind::AscribeUserType { ref subpattern, .. } => PatStack::from_pattern(subpattern)
-            .specialize_constructor(cx, constructor, ctor_wild_subpatterns),
+        PatKind::AscribeUserType { ref subpattern, .. } => {
+            specialize_one_pattern(cx, subpattern, constructor, ctor_wild_subpatterns)
+        }
 
         PatKind::Binding { .. } | PatKind::Wild => {
             Some(PatStack::from_slice(ctor_wild_subpatterns))
