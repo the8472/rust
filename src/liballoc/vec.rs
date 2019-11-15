@@ -2022,7 +2022,7 @@ fn from_into_iter_source<T, I>(mut iterator: I) -> Vec<T>
         debug_assert_eq!(original_ptr, src_buf);
         let src_idx = source_iter.ptr;
         unsafe {
-            let dst = src_buf.offset(front_buffer.count as isize);
+            let dst = src_buf.add(front_buffer.count);
             debug_assert!(dst as *const _ < src_idx,
                           "InPlaceIterable implementation produced more\
                           items than it consumed from the source");
