@@ -2028,7 +2028,8 @@ fn from_into_iter_source<T, I>(mut iterator: I) -> Vec<T>
         let mut sink = InPlaceDrop { inner: src_buf, dst, did_panic: true };
         let _ = iterator.try_for_each::<_, Result<_, !>>(|item| {
             unsafe {
-                debug_assert!(sink.dst as *const _ <= src_end, "InPlaceIterable contract violation");
+                debug_assert!(sink.dst as *const _ <= src_end,
+                              "InPlaceIterable contract violation");
                 ptr::write(sink.dst, item);
                 sink.dst = sink.dst.add(1);
             }
