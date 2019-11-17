@@ -2155,6 +2155,15 @@ impl<T, I> SpecExtend<T, I> for Vec<T>
     }
 }
 
+impl<T> SpecExtend<T, IntoIter<T>> for Vec<T> {
+    fn spec_extend(&mut self, mut iterator: IntoIter<T>) {
+        unsafe {
+            self.append_elements(iterator.as_slice() as _);
+        }
+        iterator.ptr = iterator.end;
+    }
+}
+
 impl<'a, T: 'a, I> SpecExtend<&'a T, I> for Vec<T>
     where I: Iterator<Item=&'a T>,
           T: Clone,
