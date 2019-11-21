@@ -558,7 +558,11 @@ impl Drop for Droppable {
 fn bench_in_place_collect_droppable(b: &mut test::Bencher) {
     let v : Vec<Droppable> = std::iter::repeat_with(|| Droppable(0)).take(1000).collect();
     b.iter(|| {
-        v.clone().into_iter().skip(100).collect::<Vec<_>>()
+        v.clone().into_iter()
+            .skip(100)
+            .enumerate()
+            .map(|(i, e)| Droppable(i ^ e.0))
+            .collect::<Vec<_>>()
     })
 }
 
