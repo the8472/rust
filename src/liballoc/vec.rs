@@ -1973,8 +1973,14 @@ trait SpecFrom<T, I> {
     fn from_iter(iter: I) -> Self;
 }
 
-impl<T, I> SpecFrom<T, I> for Vec<T>
-    where I: Iterator<Item=T>,
+// Another specialization trait for Vec::from_iter
+// necessary to manually prioritize overlapping specializations
+trait SpecFromNested<T, I> {
+    fn from_iter(iter: I) -> Self;
+}
+
+impl<T, I> SpecFromNested<T, I> for Vec<T>
+    where I: Iterator<Item=T>
 {
     default fn from_iter(mut iterator: I) -> Self {
         // Unroll the first iteration, as the vector is going to be
@@ -1998,6 +2004,24 @@ impl<T, I> SpecFrom<T, I> for Vec<T>
         // to spec_from for empty Vecs
         <Vec<T> as SpecExtend<T, I>>::spec_extend(&mut vector, iterator);
         vector
+    }
+}
+
+impl<T, I> SpecFromNested<T, I> for Vec<T> where I: TrustedLen<Item=T> {
+    fn from_iter(iterator: I) -> Self {
+        let mut vector = Vec::new();
+        // must delegate to spec_extend() since extend() itself delegates
+        // to spec_from for empty Vecs
+        vector.spec_extend(iterator);
+        vector
+    }
+}
+
+impl<T, I> SpecFrom<T, I> for Vec<T>
+    where I: Iterator<Item=T>,
+{
+    default fn from_iter(iterator: I) -> Self {
+        SpecFromNested::from_iter(iterator)
     }
 }
 
