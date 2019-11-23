@@ -2235,12 +2235,7 @@ impl<'a, T: 'a> SpecExtend<&'a T, slice::Iter<'a, T>> for Vec<T>
 {
     fn spec_extend(&mut self, iterator: slice::Iter<'a, T>) {
         let slice = iterator.as_slice();
-        self.reserve(slice.len());
-        unsafe {
-            let len = self.len();
-            self.set_len(len + slice.len());
-            self.get_unchecked_mut(len..).copy_from_slice(slice);
-        }
+        unsafe { self.append_elements(slice) };
     }
 }
 
