@@ -611,7 +611,8 @@ fn bench_chain_collect(b: &mut test::Bencher) {
 fn bench_chain_chain_collect(b: &mut test::Bencher) {
     let data = black_box([0; LEN]);
     b.iter(|| {
-        data.iter().cloned().chain([1].iter().cloned()).chain([2].iter().cloned()).collect::<Vec<_>>()
+        data.iter().cloned().chain([1].iter().cloned())
+            .chain([2].iter().cloned()).collect::<Vec<_>>()
     });
 }
 

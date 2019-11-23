@@ -1011,7 +1011,8 @@ unsafe impl<S: Iterator, P, I: Iterator> SourceIter for Filter<I, P> where
 }
 
 #[unstable(issue = "0", feature = "inplace_iteration")]
-unsafe impl<I: InPlaceIterable, P> InPlaceIterable for Filter<I, P> where P: FnMut(&I::Item) -> bool {}
+unsafe impl<I: InPlaceIterable, P> InPlaceIterable for Filter<I, P>
+    where P: FnMut(&I::Item) -> bool {}
 
 /// An iterator that uses `f` to both filter and map elements from `iter`.
 ///
@@ -1146,7 +1147,8 @@ unsafe impl<S: Iterator, B, I: Iterator, F> SourceIter for FilterMap<I, F> where
 }
 
 #[unstable(issue = "0", feature = "inplace_iteration")]
-unsafe impl<B, I: InPlaceIterable, F> InPlaceIterable for FilterMap<I, F> where F: FnMut(I::Item) -> Option<B> {}
+unsafe impl<B, I: InPlaceIterable, F> InPlaceIterable for FilterMap<I, F>
+    where F: FnMut(I::Item) -> Option<B> {}
 
 
 /// An iterator that yields the current count and the element during iteration.
@@ -1686,7 +1688,8 @@ unsafe impl<S: Iterator, P, I: Iterator> SourceIter for SkipWhile<I, P> where
 }
 
 #[unstable(issue = "0", feature = "inplace_iteration")]
-unsafe impl<I: InPlaceIterable, F> InPlaceIterable for SkipWhile<I, F> where F: FnMut(&I::Item) -> bool {}
+unsafe impl<I: InPlaceIterable, F> InPlaceIterable for SkipWhile<I, F>
+    where F: FnMut(&I::Item) -> bool {}
 
 /// An iterator that only accepts elements while `predicate` returns `true`.
 ///
@@ -1798,7 +1801,8 @@ unsafe impl<S: Iterator, P, I: Iterator> SourceIter for TakeWhile<I, P> where
 }
 
 #[unstable(issue = "0", feature = "inplace_iteration")]
-unsafe impl<I: InPlaceIterable, F> InPlaceIterable for TakeWhile<I, F> where F: FnMut(&I::Item) -> bool {}
+unsafe impl<I: InPlaceIterable, F> InPlaceIterable for TakeWhile<I, F>
+    where F: FnMut(&I::Item) -> bool {}
 
 
 /// An iterator that skips over `n` elements of `iter`.
