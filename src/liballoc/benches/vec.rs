@@ -548,16 +548,16 @@ fn bench_in_place_recycle(b: &mut test::Bencher) {
 
 #[bench]
 fn bench_in_place_zip_recycle(b: &mut test::Bencher) {
-    let mut data = vec![0u8; 256];
+    let mut data = vec![0u8; 1000];
     let mut rng = rand::thread_rng();
-    let mut subst = (0..=255u8).collect::<Vec<_>>();
-    subst.shuffle(&mut rng);
+    let mut subst = vec![0u8; 1000];
+    rng.fill_bytes(&mut subst[..]);
 
     b.iter(|| {
         let tmp = std::mem::replace(&mut data, Vec::new());
         let mangled = tmp.into_iter().zip(subst.iter().copied()).enumerate()
             .map(|(i, (d, s))| d.wrapping_add(i as u8) ^ s).collect::<Vec<_>>();
-        assert_eq!(mangled.len(), 256);
+        assert_eq!(mangled.len(), 1000);
         std::mem::replace(&mut data, black_box(mangled));
     });
 }
@@ -566,8 +566,8 @@ fn bench_in_place_zip_recycle(b: &mut test::Bencher) {
 fn bench_in_place_zip_iter_mut(b: &mut test::Bencher) {
     let mut data = vec![0u8; 256];
     let mut rng = rand::thread_rng();
-    let mut subst = (0..=255u8).collect::<Vec<_>>();
-    subst.shuffle(&mut rng);
+    let mut subst = vec![0u8; 1000];
+    rng.fill_bytes(&mut subst[..]);
 
     b.iter(|| {
         data.iter_mut().enumerate().for_each(|(i, d)| {
