@@ -16,7 +16,8 @@ pub use self::chain::Chain;
 #[stable(feature = "rust1", since = "1.0.0")]
 pub use self::flatten::{FlatMap, Flatten};
 pub use self::zip::Zip;
-pub(crate) use self::zip::TrustedRandomAccess;
+#[unstable(issue = "0", feature = "std_internals")]
+pub use self::zip::TrustedRandomAccess;
 
 /// This trait provides transitive access to source-stages in an interator-adapter pipeline
 /// under the conditions that
@@ -279,6 +280,7 @@ impl<'a, I, T: 'a> FusedIterator for Copied<I>
 {}
 
 #[doc(hidden)]
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<'a, I, T: 'a> TrustedRandomAccess for Copied<I>
     where I: TrustedRandomAccess<Item=&'a T>, T: Copy
 {
@@ -390,6 +392,7 @@ impl<'a, I, T: 'a> FusedIterator for Cloned<I>
 {}
 
 #[doc(hidden)]
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<'a, I, T: 'a> TrustedRandomAccess for Cloned<I>
     where I: TrustedRandomAccess<Item=&'a T>, T: Clone
 {
@@ -402,6 +405,7 @@ unsafe impl<'a, I, T: 'a> TrustedRandomAccess for Cloned<I>
 }
 
 #[doc(hidden)]
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<'a, I, T: 'a> TrustedRandomAccess for Cloned<I>
     where I: TrustedRandomAccess<Item=&'a T>, T: Copy
 {
@@ -847,6 +851,7 @@ unsafe impl<B, I, F> TrustedLen for Map<I, F>
           F: FnMut(I::Item) -> B {}
 
 #[doc(hidden)]
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<B, I, F> TrustedRandomAccess for Map<I, F>
     where I: TrustedRandomAccess,
           F: FnMut(I::Item) -> B,
@@ -1328,6 +1333,7 @@ impl<I> ExactSizeIterator for Enumerate<I> where I: ExactSizeIterator {
 }
 
 #[doc(hidden)]
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<I> TrustedRandomAccess for Enumerate<I>
     where I: TrustedRandomAccess
 {
@@ -2385,6 +2391,7 @@ impl<I> DoubleEndedIterator for Fuse<I> where I: DoubleEndedIterator {
     }
 }
 
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<I> TrustedRandomAccess for Fuse<I>
     where I: TrustedRandomAccess,
 {

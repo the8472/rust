@@ -4129,6 +4129,7 @@ unsafe impl<T> TrustedLen for Windows<'_, T> {}
 impl<T> FusedIterator for Windows<'_, T> {}
 
 #[doc(hidden)]
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<'a, T> TrustedRandomAccess for Windows<'a, T> {
     unsafe fn get_unchecked(&mut self, i: usize) -> &'a [T] {
         from_raw_parts(self.v.as_ptr().add(i), self.size)
@@ -4269,6 +4270,7 @@ unsafe impl<T> TrustedLen for Chunks<'_, T> {}
 impl<T> FusedIterator for Chunks<'_, T> {}
 
 #[doc(hidden)]
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<'a, T> TrustedRandomAccess for Chunks<'a, T> {
     unsafe fn get_unchecked(&mut self, i: usize) -> &'a [T] {
         let start = i * self.chunk_size;
@@ -4409,6 +4411,7 @@ unsafe impl<T> TrustedLen for ChunksMut<'_, T> {}
 impl<T> FusedIterator for ChunksMut<'_, T> {}
 
 #[doc(hidden)]
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<'a, T> TrustedRandomAccess for ChunksMut<'a, T> {
     unsafe fn get_unchecked(&mut self, i: usize) -> &'a mut [T] {
         let start = i * self.chunk_size;
@@ -4551,7 +4554,7 @@ unsafe impl<T> TrustedLen for ChunksExact<'_, T> {}
 impl<T> FusedIterator for ChunksExact<'_, T> {}
 
 #[doc(hidden)]
-#[stable(feature = "chunks_exact", since = "1.31.0")]
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<'a, T> TrustedRandomAccess for ChunksExact<'a, T> {
     unsafe fn get_unchecked(&mut self, i: usize) -> &'a [T] {
         let start = i * self.chunk_size;
@@ -4683,7 +4686,7 @@ unsafe impl<T> TrustedLen for ChunksExactMut<'_, T> {}
 impl<T> FusedIterator for ChunksExactMut<'_, T> {}
 
 #[doc(hidden)]
-#[stable(feature = "chunks_exact", since = "1.31.0")]
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<'a, T> TrustedRandomAccess for ChunksExactMut<'a, T> {
     unsafe fn get_unchecked(&mut self, i: usize) -> &'a mut [T] {
         let start = i * self.chunk_size;
@@ -4827,7 +4830,7 @@ unsafe impl<T> TrustedLen for RChunks<'_, T> {}
 impl<T> FusedIterator for RChunks<'_, T> {}
 
 #[doc(hidden)]
-#[stable(feature = "rchunks", since = "1.31.0")]
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<'a, T> TrustedRandomAccess for RChunks<'a, T> {
     unsafe fn get_unchecked(&mut self, i: usize) -> &'a [T] {
         let end = self.v.len() - i * self.chunk_size;
@@ -4970,7 +4973,7 @@ unsafe impl<T> TrustedLen for RChunksMut<'_, T> {}
 impl<T> FusedIterator for RChunksMut<'_, T> {}
 
 #[doc(hidden)]
-#[stable(feature = "rchunks", since = "1.31.0")]
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<'a, T> TrustedRandomAccess for RChunksMut<'a, T> {
     unsafe fn get_unchecked(&mut self, i: usize) -> &'a mut [T] {
         let end = self.v.len() - i * self.chunk_size;
@@ -5116,7 +5119,7 @@ unsafe impl<T> TrustedLen for RChunksExact<'_, T> {}
 impl<T> FusedIterator for RChunksExact<'_, T> {}
 
 #[doc(hidden)]
-#[stable(feature = "rchunks", since = "1.31.0")]
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<'a, T> TrustedRandomAccess for RChunksExact<'a, T> {
     unsafe fn get_unchecked(&mut self, i: usize) -> &'a [T] {
         let end = self.v.len() - i * self.chunk_size;
@@ -5253,7 +5256,7 @@ unsafe impl<T> TrustedLen for RChunksExactMut<'_, T> {}
 impl<T> FusedIterator for RChunksExactMut<'_, T> {}
 
 #[doc(hidden)]
-#[stable(feature = "rchunks", since = "1.31.0")]
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<'a, T> TrustedRandomAccess for RChunksExactMut<'a, T> {
     unsafe fn get_unchecked(&mut self, i: usize) -> &'a mut [T] {
         let end = self.v.len() - i * self.chunk_size;
@@ -5589,6 +5592,7 @@ impl_marker_for!(BytewiseEquality,
                  u8 i8 u16 i16 u32 i32 u64 i64 u128 i128 usize isize char bool);
 
 #[doc(hidden)]
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<'a, T> TrustedRandomAccess for Iter<'a, T> {
     unsafe fn get_unchecked(&mut self, i: usize) -> &'a T {
         &*self.ptr.add(i)
@@ -5597,6 +5601,7 @@ unsafe impl<'a, T> TrustedRandomAccess for Iter<'a, T> {
 }
 
 #[doc(hidden)]
+#[unstable(issue = "0", feature = "std_internals")]
 unsafe impl<'a, T> TrustedRandomAccess for IterMut<'a, T> {
     unsafe fn get_unchecked(&mut self, i: usize) -> &'a mut T {
         &mut *self.ptr.add(i)

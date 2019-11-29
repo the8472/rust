@@ -357,8 +357,10 @@ pub use self::adapters::Flatten;
 pub use self::adapters::Copied;
 #[unstable(issue = "0", feature = "inplace_iteration")]
 pub use self::adapters::SourceIter;
+#[unstable(issue = "0", feature = "std_internals")]
+pub use self::adapters::TrustedRandomAccess;
 
-pub(crate) use self::adapters::{TrustedRandomAccess, process_results};
+pub(crate) use self::adapters::process_results;
 
 mod range;
 mod sources;
