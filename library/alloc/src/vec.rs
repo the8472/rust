@@ -2172,6 +2172,8 @@ where
     }
 }
 
+// A helper struct for in-place iteration that drops the destination slice of iteration.
+// The source slice is dropped by IntoIter
 struct InPlaceDrop<T> {
     inner: *mut T,
     dst: *mut T,
@@ -2235,8 +2237,10 @@ where
             return SpecFromNested::from_iter(iterator);
         }
 
-        let src_buf = iterator.as_inner().as_into_iter().buf.as_ptr();
-        let src_end = iterator.as_inner().as_into_iter().end;
+        let (src_buf, src_end) = {
+            let inner = unsafe { iterator.as_inner().as_into_iter() };
+            (inner.buf.as_ptr(), inner.end)
+        };
         let dst = src_buf;
 
         let dst = if mem::needs_drop::<T>() {
@@ -2278,7 +2282,7 @@ where
                 .unwrap()
         };
 
-        let src = iterator.as_inner().as_into_iter();
+        let src = unsafe { iterator.as_inner().as_into_iter() };
         // check if SourceIter and InPlaceIterable contracts were upheld.
         // caveat: if they weren't we may not even make it to this point
         debug_assert_eq!(src_buf, src.buf.as_ptr());
@@ -2998,7 +3002,7 @@ unsafe impl<T> SourceIter for IntoIter<T> {
     type Source = IntoIter<T>;
 
     #[inline]
-    fn as_inner(&mut self) -> &mut Self::Source {
+    unsafe fn as_inner(&mut self) -> &mut Self::Source {
         self
     }
 }
