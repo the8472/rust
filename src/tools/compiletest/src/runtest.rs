@@ -1951,6 +1951,9 @@ impl<'test> TestCx<'test> {
                 if !self.props.compile_flags.iter().any(|s| s.starts_with("--error-format")) {
                     rustc.args(&["--error-format", "json"]);
                 }
+                if !self.props.compile_flags.iter().any(|s| s.contains("codegen-units")) {
+                    rustc.arg("-Ccodegen-units=1");
+                }
                 rustc.arg("-Zui-testing");
                 rustc.arg("-Zdeduplicate-diagnostics=no");
                 rustc.arg("-Zemit-future-incompat-report");

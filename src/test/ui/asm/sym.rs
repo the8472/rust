@@ -1,3 +1,4 @@
+// compile-flags: -C codegen-units=2
 // no-system-llvm
 // only-x86_64
 // only-linux
