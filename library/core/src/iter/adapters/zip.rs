@@ -268,21 +268,27 @@ where
     }
 }
 
-#[doc(hidden)]
-#[unstable(feature = "trusted_random_access", issue = "none")]
-unsafe impl<A, B> TrustedRandomAccessNeedsCleanup for Zip<A, B>
-where
-    A: TrustedRandomAccessNeedsCleanup,
-    B: TrustedRandomAccess,
-{
-}
+#[marker]
+#[rustc_specialization_trait]
+trait NeedsCleanup {}
+
+impl<A, B> NeedsCleanup for Zip<A, B> where A: TrustedRandomAccessNeedsCleanup {}
+impl<A, B> NeedsCleanup for Zip<A, B> where B: TrustedRandomAccessNeedsCleanup {}
+
+
+#[marker]
+#[rustc_specialization_trait]
+trait NeedsForwardSetup {}
+
+impl<A, B> NeedsForwardSetup for Zip<A, B> where A: TrustedRandomAccessNeedsForwardSetup {}
+impl<A, B> NeedsForwardSetup for Zip<A, B> where B: TrustedRandomAccessNeedsForwardSetup {}
+
 
 #[doc(hidden)]
 #[unstable(feature = "trusted_random_access", issue = "none")]
 unsafe impl<A, B> TrustedRandomAccessNeedsCleanup for Zip<A, B>
 where
-    A: TrustedRandomAccess,
-    B: TrustedRandomAccessNeedsCleanup,
+    Self: NeedsCleanup,
 {
 }
 
@@ -290,23 +296,16 @@ where
 #[unstable(feature = "trusted_random_access", issue = "none")]
 unsafe impl<A, B> TrustedRandomAccessNeedsForwardSetup for Zip<A, B>
 where
-    A: TrustedRandomAccessNeedsForwardSetup,
-    B: TrustedRandomAccess,
+    Self: NeedsForwardSetup,
 {
 }
 
 #[doc(hidden)]
 #[unstable(feature = "trusted_random_access", issue = "none")]
-unsafe impl<A, B> TrustedRandomAccessNeedsForwardSetup for Zip<A, B>
-where
+unsafe impl<A, B> TrustedRandomAccessNeedsReverseSetup for Zip<A, B> where
     A: TrustedRandomAccess,
-    B: TrustedRandomAccessNeedsForwardSetup,
-{
-}
-
-#[doc(hidden)]
-#[unstable(feature = "trusted_random_access", issue = "none")]
-unsafe impl<A, B> TrustedRandomAccessNeedsReverseSetup for Zip<A, B> where Self: TrustedRandomAccess {}
+    B: TrustedRandomAccess,
+{}
 
 #[stable(feature = "fused", since = "1.26.0")]
 impl<A, B> FusedIterator for Zip<A, B>

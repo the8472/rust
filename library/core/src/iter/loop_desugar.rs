@@ -88,7 +88,7 @@ where
 
 impl<I, T> DesugarSetup<T> for ForLoopDesugar<I>
 where
-    I: TrustedRandomAccessNeedsForwardSetup + Iterator<Item = T>,
+    I: TrustedRandomAccess + TrustedRandomAccessNeedsForwardSetup + Iterator<Item = T>,
 {
     #[inline]
     fn setup(&mut self) {
@@ -106,7 +106,7 @@ where
 
 impl<I, T> DesugarCleanup<T> for ForLoopDesugar<I>
 where
-    I: TrustedRandomAccessNeedsCleanup + Iterator<Item = T>,
+    I: TrustedRandomAccess + TrustedRandomAccessNeedsCleanup + Iterator<Item = T>,
 {
     #[inline]
     fn cleanup(&mut self) {

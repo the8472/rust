@@ -68,20 +68,17 @@ pub unsafe trait TrustedRandomAccess: Sized {
 #[doc(hidden)]
 #[unstable(feature = "trusted_random_access", issue = "none")]
 #[rustc_specialization_trait]
-#[marker]
-pub unsafe trait TrustedRandomAccessNeedsCleanup: TrustedRandomAccess {}
+pub unsafe trait TrustedRandomAccessNeedsCleanup {}
 
 #[doc(hidden)]
 #[unstable(feature = "trusted_random_access", issue = "none")]
 #[rustc_specialization_trait]
-#[marker]
-pub unsafe trait TrustedRandomAccessNeedsForwardSetup: TrustedRandomAccess {}
+pub unsafe trait TrustedRandomAccessNeedsForwardSetup {}
 
 #[doc(hidden)]
 #[unstable(feature = "trusted_random_access", issue = "none")]
 #[rustc_specialization_trait]
-#[marker]
-pub unsafe trait TrustedRandomAccessNeedsReverseSetup: TrustedRandomAccess {}
+pub unsafe trait TrustedRandomAccessNeedsReverseSetup {}
 
 /// Like `Iterator::__iterator_get_unchecked`, but doesn't require the compiler to
 /// know that `U: TrustedRandomAccess`.
