@@ -384,6 +384,17 @@ impl<'tcx> SizeSkeleton<'tcx> {
                     || {},
                 );
 
+                if tail.is_sized(tcx, param_env) {
+                    let thin_ptr = Ty::new_ptr(tcx, tcx.types.unit, Mutability::Not);
+                    let size = tcx.layout_of(param_env.and(thin_ptr)).unwrap().size;
+
+                    return Ok(SizeSkeleton::Pointer {
+                        non_zero,
+                        known_size: Some(size),
+                        tail: tcx.erase_regions(tail),
+                    });
+                }
+
                 match tail.kind() {
                     ty::Param(_) | ty::Alias(ty::Projection | ty::Inherent, _) => {
                         debug_assert!(tail.has_non_region_param());

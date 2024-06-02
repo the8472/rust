@@ -17,6 +17,7 @@ pub(crate) fn target() -> Target {
         | SanitizerSet::SAFESTACK
         | SanitizerSet::THREAD;
     base.supports_xray = true;
+    base.address_space_restriction = Some(0..=(i64::MAX as u128));
 
     // When we're asked to use the `rust-lld` linker by default, set the appropriate lld-using
     // linker flavor, and self-contained linker component.

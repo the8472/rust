@@ -226,7 +226,20 @@ fn layout_of_uncached<'tcx>(
         ty::Ref(_, pointee, _) | ty::RawPtr(pointee, _) => {
             let mut data_ptr = scalar_unit(Pointer(AddressSpace::DATA));
             if !ty.is_unsafe_ptr() {
-                data_ptr.valid_range_mut().start = 1;
+                let valid_range = data_ptr.valid_range_mut();
+                valid_range.start = 1;
+                if let Some(ref address_space) = dl.address_space_restriction {
+                    match ty_is_non_zst(pointee, param_env, tcx) {
+                        NonZst::True => {
+                            valid_range.start = 1.max(*address_space.start());
+                            valid_range.end = *address_space.end();
+                        }
+                        NonZst::Unknown => {
+                            return Err(error(cx, LayoutError::Unknown(pointee)));
+                        }
+                        _ => {}
+                    }
+                }
             }
 
             let pointee = tcx.normalize_erasing_regions(param_env, pointee);
@@ -282,7 +295,10 @@ fn layout_of_uncached<'tcx>(
                         ty::Slice(element) => match ty_is_non_zst(*element, param_env, tcx) {
                             NonZst::True => {
                                 metadata.valid_range_mut().end =
-                                    dl.ptr_sized_integer().signed_max() as u128
+                                    dl.ptr_sized_integer().signed_max() as u128;
+                                if let Some(ref address_space) = dl.address_space_restriction {
+                                    data_ptr.valid_range_mut().end = *address_space.end();
+                                }
                             }
                             NonZst::Unknown => return Err(error(cx, LayoutError::Unknown(ty))),
                             _ => {}
@@ -290,6 +306,9 @@ fn layout_of_uncached<'tcx>(
                         ty::Str => {
                             metadata.valid_range_mut().end =
                                 dl.ptr_sized_integer().signed_max() as u128;
+                            if let Some(ref address_space) = dl.address_space_restriction {
+                                data_ptr.valid_range_mut().end = *address_space.end();
+                            }
                         }
                         _ => {
                             eprint!("unexpected tail {:?}", tail);
@@ -851,6 +870,7 @@ fn ty_is_non_zst<'tcx>(ty: Ty<'tcx>, param_env: ParamEnv<'tcx>, tcx: TyCtxt<'tcx
         ty::FnDef(..) => NonZst::False,
         ty::Never => NonZst::Uninhabited,
         ty::Param(..) => NonZst::Unknown,
+        ty::Foreign(_) => NonZst::False,
         // treat unsized types as potentially-ZST
         ty::Dynamic(..) | ty::Slice(..) | ty::Str => NonZst::False,
         ty::Alias(..) => match tcx.try_normalize_erasing_regions(param_env, ty) {

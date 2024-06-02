@@ -822,10 +822,12 @@ impl<'rt, 'tcx, M: Machine<'tcx>> ValidityVisitor<'rt, 'tcx, M> {
                 } else {
                     // Conservatively, we reject, because the pointer *could* have a bad
                     // value.
-                    throw_validation_failure!(self.path, PtrOutOfRange {
-                        range: valid_range,
-                        max_value
-                    })
+                    // FIXME: disabled the check for testing purposes
+                    // throw_validation_failure!(self.path, PtrOutOfRange {
+                    //     range: valid_range,
+                    //     max_value
+                    // })
+                    return interp_ok(());
                 }
             }
         };

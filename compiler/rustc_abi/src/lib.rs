@@ -192,6 +192,8 @@ pub struct TargetDataLayout {
     /// Note: This isn't in LLVM's data layout string, it is `short_enum`
     /// so the only valid spec for LLVM is c_int::BITS or 8
     pub c_enum_min_size: Integer,
+
+    pub address_space_restriction: Option<RangeInclusive<u128>>,
 }
 
 impl Default for TargetDataLayout {
@@ -219,6 +221,7 @@ impl Default for TargetDataLayout {
             ],
             instruction_address_space: AddressSpace::DATA,
             c_enum_min_size: Integer::I32,
+            address_space_restriction: None,
         }
     }
 }

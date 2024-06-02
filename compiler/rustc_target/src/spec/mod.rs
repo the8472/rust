@@ -37,7 +37,7 @@
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::hash::{Hash, Hasher};
-use std::ops::{Deref, DerefMut};
+use std::ops::{Deref, DerefMut, RangeInclusive};
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use std::{fmt, io};
@@ -2039,6 +2039,8 @@ impl Target {
     pub fn parse_data_layout(&self) -> Result<TargetDataLayout, TargetDataLayoutErrors<'_>> {
         let mut dl = TargetDataLayout::parse_from_llvm_datalayout_string(&self.data_layout)?;
 
+        dl.address_space_restriction = self.options.address_space_restriction.clone();
+
         // Perform consistency checks against the Target information.
         if dl.endian != self.endian {
             return Err(TargetDataLayoutErrors::InconsistentTargetArchitecture {
@@ -2316,6 +2318,9 @@ pub struct TargetOptions {
     pub forces_embed_bitcode: bool,
     /// Content of the LLVM cmdline section associated with embedded bitcode.
     pub bitcode_llvm_cmdline: StaticCow<str>,
+
+    /// Whether the target restricts at which addresses valid allocations can exist.
+    pub address_space_restriction: Option<RangeInclusive<u128>>,
 
     /// Don't use this field; instead use the `.min_atomic_width()` method.
     pub min_atomic_width: Option<u64>,
@@ -2652,6 +2657,7 @@ impl Default for TargetOptions {
             obj_is_bitcode: false,
             forces_embed_bitcode: false,
             bitcode_llvm_cmdline: "".into(),
+            address_space_restriction: None,
             min_atomic_width: None,
             max_atomic_width: None,
             atomic_cas: true,
