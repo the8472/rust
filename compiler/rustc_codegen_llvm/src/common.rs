@@ -181,16 +181,18 @@ impl<'ll, 'tcx> ConstCodegenMethods<'tcx> for CodegenCx<'ll, 'tcx> {
     }
 
     fn const_uint(&self, t: &'ll Type, i: u64) -> &'ll Value {
-        debug_assert!(
-            self.type_kind(t) == TypeKind::Integer,
+        debug_assert_eq!(
+            self.type_kind(t),
+            TypeKind::Integer,
             "only allows integer types in const_uint"
         );
         unsafe { llvm::LLVMConstInt(t, i, False) }
     }
 
     fn const_uint_big(&self, t: &'ll Type, u: u128) -> &'ll Value {
-        debug_assert!(
-            self.type_kind(t) == TypeKind::Integer,
+        debug_assert_eq!(
+            self.type_kind(t),
+            TypeKind::Integer,
             "only allows integer types in const_uint_big"
         );
         unsafe {
