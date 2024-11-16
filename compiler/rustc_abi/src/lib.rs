@@ -1667,6 +1667,9 @@ pub struct LayoutData<FieldIdx: Idx, VariantIdx: Idx> {
     /// Only used on aarch64-linux, where the argument passing ABI ignores the requested alignment
     /// in some cases.
     pub unadjusted_abi_align: Align,
+
+    /// The randomization seed based on this type's own repr and its fields'.
+    pub randomization_seed: u64,
 }
 
 impl<FieldIdx: Idx, VariantIdx: Idx> LayoutData<FieldIdx, VariantIdx> {
@@ -1687,6 +1690,14 @@ impl<FieldIdx: Idx, VariantIdx: Idx> LayoutData<FieldIdx, VariantIdx> {
         let largest_niche = Niche::from_scalar(cx, Size::ZERO, scalar);
         let size = scalar.size(cx);
         let align = scalar.align(cx);
+
+        let seed_extra = match scalar.primitive() {
+            Primitive::Int(_, true) => 1,
+            Primitive::Int(_, false) => 2,
+            Primitive::Float(_) => 3,
+            Primitive::Pointer(_) => 4,
+        };
+
         LayoutData {
             variants: Variants::Single { index: VariantIdx::new(0) },
             fields: FieldsShape::Primitive,
@@ -1696,6 +1707,7 @@ impl<FieldIdx: Idx, VariantIdx: Idx> LayoutData<FieldIdx, VariantIdx> {
             align,
             max_repr_align: None,
             unadjusted_abi_align: align.abi,
+            randomization_seed: size.bytes().wrapping_add(seed_extra << 32),
         }
     }
 }
@@ -1718,6 +1730,7 @@ where
             variants,
             max_repr_align,
             unadjusted_abi_align,
+            ref randomization_seed,
         } = self;
         f.debug_struct("Layout")
             .field("size", size)
@@ -1728,6 +1741,7 @@ where
             .field("variants", variants)
             .field("max_repr_align", max_repr_align)
             .field("unadjusted_abi_align", unadjusted_abi_align)
+            .field("randomization_seed", randomization_seed)
             .finish()
     }
 }

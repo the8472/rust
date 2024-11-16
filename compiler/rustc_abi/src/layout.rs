@@ -119,6 +119,8 @@ impl<Cx: HasDataLayout> LayoutCalculator<Cx> {
             .chain(Niche::from_scalar(dl, Size::ZERO, a))
             .max_by_key(|niche| niche.available(dl));
 
+        let combined_seed = a.size(&self.cx).bytes().wrapping_add(b.size(&self.cx).bytes());
+
         LayoutData {
             variants: Variants::Single { index: VariantIdx::new(0) },
             fields: FieldsShape::Arbitrary {
@@ -131,6 +133,7 @@ impl<Cx: HasDataLayout> LayoutCalculator<Cx> {
             size,
             max_repr_align: None,
             unadjusted_abi_align: align.abi,
+            randomization_seed: combined_seed,
         }
     }
 
@@ -222,6 +225,7 @@ impl<Cx: HasDataLayout> LayoutCalculator<Cx> {
             size: Size::ZERO,
             max_repr_align: None,
             unadjusted_abi_align: dl.i8_align.abi,
+            randomization_seed: 0,
         }
     }
 
@@ -384,6 +388,11 @@ impl<Cx: HasDataLayout> LayoutCalculator<Cx> {
             return Err(LayoutCalculatorError::EmptyUnion);
         };
 
+        let combined_seed = only_variant
+            .iter()
+            .map(|v| v.randomization_seed)
+            .fold(repr.field_shuffle_seed, |acc, seed| acc.wrapping_add(seed));
+
         Ok(LayoutData {
             variants: Variants::Single { index: only_variant_idx },
             fields: FieldsShape::Union(union_field_count),
@@ -393,6 +402,7 @@ impl<Cx: HasDataLayout> LayoutCalculator<Cx> {
             size: size.align_to(align.abi),
             max_repr_align,
             unadjusted_abi_align,
+            randomization_seed: combined_seed,
         })
     }
 
@@ -649,6 +659,11 @@ impl<Cx: HasDataLayout> LayoutCalculator<Cx> {
                 BackendRepr::Memory { sized: true }
             };
 
+            let combined_seed = variant_layouts
+                .iter()
+                .map(|v| v.randomization_seed)
+                .fold(repr.field_shuffle_seed, |acc, seed| acc.wrapping_add(seed));
+
             let layout = LayoutData {
                 variants: Variants::Multiple {
                     tag: niche_scalar,
@@ -670,6 +685,7 @@ impl<Cx: HasDataLayout> LayoutCalculator<Cx> {
                 align,
                 max_repr_align,
                 unadjusted_abi_align,
+                randomization_seed: combined_seed,
             };
 
             Some(TmpLayout { layout, variants: variant_layouts })
@@ -960,6 +976,11 @@ impl<Cx: HasDataLayout> LayoutCalculator<Cx> {
 
         let largest_niche = Niche::from_scalar(dl, Size::ZERO, tag);
 
+        let combined_seed = layout_variants
+            .iter()
+            .map(|v| v.randomization_seed)
+            .fold(repr.field_shuffle_seed, |acc, seed| acc.wrapping_add(seed));
+
         let tagged_layout = LayoutData {
             variants: Variants::Multiple {
                 tag,
@@ -977,6 +998,7 @@ impl<Cx: HasDataLayout> LayoutCalculator<Cx> {
             size,
             max_repr_align,
             unadjusted_abi_align,
+            randomization_seed: combined_seed,
         };
 
         let tagged_layout = TmpLayout { layout: tagged_layout, variants: layout_variants };
@@ -1028,6 +1050,8 @@ impl<Cx: HasDataLayout> LayoutCalculator<Cx> {
         let mut align = if pack.is_some() { dl.i8_align } else { dl.aggregate_align };
         let mut max_repr_align = repr.align;
         let mut inverse_memory_index: IndexVec<u32, FieldIdx> = fields.indices().collect();
+        let field_seed =
+            fields.raw.iter().fold(0u64, |acc, f| acc.wrapping_add(f.randomization_seed));
         let optimize_field_order = !repr.inhibit_struct_field_reordering();
         if optimize_field_order && fields.len() > 1 {
             let end =
@@ -1045,8 +1069,9 @@ impl<Cx: HasDataLayout> LayoutCalculator<Cx> {
                     use rand::seq::SliceRandom;
                     // `ReprOptions.field_shuffle_seed` is a deterministic seed we can use to randomize field
                     // ordering.
-                    let mut rng =
-                        rand_xoshiro::Xoshiro128StarStar::seed_from_u64(repr.field_shuffle_seed);
+                    let mut rng = rand_xoshiro::Xoshiro128StarStar::seed_from_u64(
+                        field_seed.wrapping_add(repr.field_shuffle_seed),
+                    );
 
                     // Shuffle the ordering of the fields.
                     optimizing.shuffle(&mut rng);
@@ -1343,6 +1368,13 @@ impl<Cx: HasDataLayout> LayoutCalculator<Cx> {
             unadjusted_abi_align
         };
 
+        // a transparent struct only has a single field, so its seed should be the same as the one we pass forward
+        let seed = if repr.transparent() {
+            field_seed
+        } else {
+            field_seed.wrapping_add(repr.field_shuffle_seed)
+        };
+
         Ok(LayoutData {
             variants: Variants::Single { index: VariantIdx::new(0) },
             fields: FieldsShape::Arbitrary { offsets, memory_index },
@@ -1352,6 +1384,7 @@ impl<Cx: HasDataLayout> LayoutCalculator<Cx> {
             size,
             max_repr_align,
             unadjusted_abi_align,
+            randomization_seed: seed,
         })
     }
 
