@@ -61,11 +61,13 @@ error: layout_of(A) = Layout {
                        },
                        max_repr_align: None,
                        unadjusted_abi_align: Align(1 bytes),
+                       randomization_seed: 9448164466094582721,
                    },
                ],
            },
            max_repr_align: None,
            unadjusted_abi_align: Align(1 bytes),
+           randomization_seed: 449584858479613826,
        }
   --> $DIR/thumb-enum.rs:16:1
    |
@@ -135,11 +137,13 @@ error: layout_of(B) = Layout {
                        },
                        max_repr_align: None,
                        unadjusted_abi_align: Align(1 bytes),
+                       randomization_seed: 5303142581069593230,
                    },
                ],
            },
            max_repr_align: None,
            unadjusted_abi_align: Align(1 bytes),
+           randomization_seed: 10606285162139186460,
        }
   --> $DIR/thumb-enum.rs:20:1
    |
@@ -209,11 +213,13 @@ error: layout_of(C) = Layout {
                        },
                        max_repr_align: None,
                        unadjusted_abi_align: Align(2 bytes),
+                       randomization_seed: 18212871818349130469,
                    },
                ],
            },
            max_repr_align: None,
            unadjusted_abi_align: Align(2 bytes),
+           randomization_seed: 17978999562988709322,
        }
   --> $DIR/thumb-enum.rs:24:1
    |
@@ -283,11 +289,13 @@ error: layout_of(P) = Layout {
                        },
                        max_repr_align: None,
                        unadjusted_abi_align: Align(4 bytes),
+                       randomization_seed: 10246698434482586249,
                    },
                ],
            },
            max_repr_align: None,
            unadjusted_abi_align: Align(4 bytes),
+           randomization_seed: 2046652795255620882,
        }
   --> $DIR/thumb-enum.rs:28:1
    |
@@ -357,11 +365,13 @@ error: layout_of(T) = Layout {
                        },
                        max_repr_align: None,
                        unadjusted_abi_align: Align(4 bytes),
+                       randomization_seed: 3872794239216570816,
                    },
                ],
            },
            max_repr_align: None,
            unadjusted_abi_align: Align(4 bytes),
+           randomization_seed: 7745588478433141632,
        }
   --> $DIR/thumb-enum.rs:34:1
    |

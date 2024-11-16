@@ -57,6 +57,7 @@ error: layout_of(Aligned1) = Layout {
                            Align(8 bytes),
                        ),
                        unadjusted_abi_align: Align(1 bytes),
+                       randomization_seed: 17460063985324092396,
                    },
                    Layout {
                        size: Size(8 bytes),
@@ -79,6 +80,7 @@ error: layout_of(Aligned1) = Layout {
                            Align(8 bytes),
                        ),
                        unadjusted_abi_align: Align(1 bytes),
+                       randomization_seed: 17460063985324092396,
                    },
                ],
            },
@@ -86,6 +88,7 @@ error: layout_of(Aligned1) = Layout {
                Align(8 bytes),
            ),
            unadjusted_abi_align: Align(1 bytes),
+           randomization_seed: 15486703808553173956,
        }
   --> $DIR/issue-96185-overaligned-enum.rs:8:1
    |
@@ -157,6 +160,7 @@ error: layout_of(Aligned2) = Layout {
                            Align(1 bytes),
                        ),
                        unadjusted_abi_align: Align(1 bytes),
+                       randomization_seed: 11209662987228166502,
                    },
                    Layout {
                        size: Size(1 bytes),
@@ -179,6 +183,7 @@ error: layout_of(Aligned2) = Layout {
                            Align(1 bytes),
                        ),
                        unadjusted_abi_align: Align(1 bytes),
+                       randomization_seed: 11209662987228166502,
                    },
                ],
            },
@@ -186,6 +191,7 @@ error: layout_of(Aligned2) = Layout {
                Align(1 bytes),
            ),
            unadjusted_abi_align: Align(1 bytes),
+           randomization_seed: 15182244887974947890,
        }
   --> $DIR/issue-96185-overaligned-enum.rs:16:1
    |

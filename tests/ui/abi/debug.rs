@@ -1,4 +1,5 @@
 //@ normalize-stderr-test: "(abi|pref|unadjusted_abi_align): Align\([1-8] bytes\)" -> "$1: $$SOME_ALIGN"
+//@ normalize-stderr-test: "randomization_seed: \d+" -> "randomization_seed: $$SEED"
 //@ normalize-stderr-test: "(size): Size\([48] bytes\)" -> "$1: $$SOME_SIZE"
 //@ normalize-stderr-test: "(can_unwind): (true|false)" -> "$1: $$SOME_BOOL"
 //@ normalize-stderr-test: "(valid_range): 0\.\.=(4294967295|18446744073709551615)" -> "$1: $$FULL"
