@@ -1050,15 +1050,15 @@ impl<Cx: HasDataLayout> LayoutCalculator<Cx> {
         let mut align = if pack.is_some() { dl.i8_align } else { dl.aggregate_align };
         let mut max_repr_align = repr.align;
         let mut inverse_memory_index: IndexVec<u32, FieldIdx> = fields.indices().collect();
-        let field_seed =
-            fields.raw.iter().fold(0u64, |acc, f| acc.wrapping_add(f.randomization_seed));
         let optimize_field_order = !repr.inhibit_struct_field_reordering();
-        if optimize_field_order && fields.len() > 1 {
-            let end =
-                if let StructKind::MaybeUnsized = kind { fields.len() - 1 } else { fields.len() };
-            let optimizing = &mut inverse_memory_index.raw[..end];
-            let fields_excluding_tail = &fields.raw[..end];
+        let end = if let StructKind::MaybeUnsized = kind { fields.len() - 1 } else { fields.len() };
+        let optimizing = &mut inverse_memory_index.raw[..end];
+        let fields_excluding_tail = &fields.raw[..end];
+        let field_seed = fields_excluding_tail
+            .iter()
+            .fold(0u64, |acc, f| acc.wrapping_add(f.randomization_seed));
 
+        if optimize_field_order && fields.len() > 1 {
             // If `-Z randomize-layout` was enabled for the type definition we can shuffle
             // the field ordering to try and catch some code making assumptions about layouts
             // we don't guarantee.
@@ -1369,6 +1369,7 @@ impl<Cx: HasDataLayout> LayoutCalculator<Cx> {
         };
 
         // a transparent struct only has a single field, so its seed should be the same as the one we pass forward
+        // if the field is also unsizable then we pass zero, which is the identity-element wrapping-add used for seed mixing
         let seed = if repr.transparent() {
             field_seed
         } else {
