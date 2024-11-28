@@ -20,8 +20,10 @@ const _: () = {
     #[cfg(randomize_layout)]
     assert!(std::mem::offset_of!(Foo::<u16>, 1) != std::mem::offset_of!(Foo::<Wrapper<u16>>, 1));
 
-    // but repr(transparent) should make them the same again.
-    // maybe not strictly guaranteed? but UCG has been leaning in that direction at least
+    // Currently there are open questions about which repr(Rust) layouts are guranteed. Substituting
+    // one type with a repr(transparent) wrapper one resulting in the same layout is a candidate for
+    // one of the few things that might be guaranteed (but it currently is not).
+    // Until this question is settled we don't gratiously break user code under randomization.
     #[cfg(randomize_layout)]
     assert!(
         std::mem::offset_of!(Foo::<u16>, 1) == std::mem::offset_of!(Foo::<TransparentWrapper>, 1)

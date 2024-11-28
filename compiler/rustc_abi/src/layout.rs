@@ -1368,8 +1368,12 @@ impl<Cx: HasDataLayout> LayoutCalculator<Cx> {
             unadjusted_abi_align
         };
 
-        // a transparent struct only has a single field, so its seed should be the same as the one we pass forward
-        // if the field is also unsizable then we pass zero, which is the identity-element wrapping-add used for seed mixing
+        // Currently there are open questions about which repr(Rust) layouts are guranteed. Substituting
+        // one type with a repr(transparent) wrapper one resulting in the same layout is a candidate for
+        // one of the few things that might be guaranteed (but it currently is not).
+        // Until this question is settled we don't gratiously break user code under randomization.
+        // So for now we pass-through a transparen't struct seed.
+        // If the field is also unsizable then we pass zero, which is the identity-element for wrapping-add used by seed mixing.
         let seed = if repr.transparent() {
             field_seed
         } else {
